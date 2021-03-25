@@ -1,0 +1,66 @@
+Sub EditPowerPointLinks()
+
+Dim pptPresentation As Presentation
+Dim pptSlide As Slide
+Dim pptShape As Shape
+
+'Set the variable to the PowerPoint Presentation
+Set pptPresentation = ActivePresentation
+
+'Loop through each slide in the presentation
+For Each pptSlide In pptPresentation.Slides
+
+Call DemoGetChartData
+
+Next
+
+'Update the links
+pptPresentation.UpdateLinks
+
+
+End Sub
+
+Sub DemoGetChartData()
+  Dim oData As ChartData
+  Dim oCht As Chart
+  Dim xWB As Object 'Excel.Workbook
+  Dim Cnt As Long
+      
+  Set oCht = ActiveWindow.Selection.ShapeRange(1).Chart
+  Set oData = oCht.ChartData
+  oData.Activate
+ 
+  ' do stuff with the chart data here; for example:
+
+    Dim x As Variant
+    x = oData.Workbook.LinkSources(1)
+        For i = 1 To UBound(x)
+            Debug.Print x(i)
+            x(i) = Replace(x(i), "S:\SaNaRy\Rashova\Distributors\Presentations\", "S:\Sales\SaNaRy\Sell Out Presentation\")
+            Debug.Print x(i)
+            
+        oData.Workbook.Sheets(1).Cells.Replace What:="S:\SaNaRy\Rashova\Distributors\Presentations\", Replacement:="S:\Sales\SaNaRy\Sell Out Presentation"
+
+    Next i
+    
+  
+
+'  For Each cel In oData.Workbook.sheets(1).UsedRange
+'  cel.Formula = Replace(cel.Formula, "S:\SaNaRy\Rashova\Distributors\Presentations\", "S:\SaNaRy\Sell Out Presentation\")
+'  Next
+  
+ 
+  'Count the visible workbooks
+  For Each xWB In oData.Workbook.Parent.Workbooks
+    If xWB.Windows(1).Visible Then Cnt = Cnt + 1
+  Next
+  If Cnt = 1 Then
+    'Close the Excel instance
+    oData.Workbook.Parent.Quit
+  Else
+    'Close the workbook
+    oData.Workbook.Close
+  End If
+End Sub
+
+
